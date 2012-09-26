@@ -1,126 +1,132 @@
+/**
+Written by Mike O'Beirne (michael.obeirne@gmail.com)
+
+Passes test data but does not pass the ACM ICPC LiveJudge due to a Runtime
+Error. Can't quite figure out what the problem is exactly. :(
+**/
+
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Stringer {
 
-	static HashMap<Integer, BigInteger> factorial = new HashMap<Integer, BigInteger>();
+    static HashMap<Integer, BigInteger> factorial = new HashMap<Integer, BigInteger>();
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		Scanner in = new Scanner(System.in);
+        Scanner in = new Scanner(System.in);
 
-		int numLetters = in.nextInt();
+        int numLetters = in.nextInt();
 
-		while (numLetters != 0) {
+        while (numLetters != 0) {
 
-			BigInteger index = BigInteger.valueOf(in.nextInt()).add(
-					BigInteger.ONE);
+            long index = in.nextLong() + 1;
 
-			int totalLetters = in.nextInt();
-			int[] letters = new int[numLetters + 1];
+            int totalLetters = 0;
+            int[] letters = new int[numLetters + 1];
 
-			for (int i = 0; i < numLetters; i++) {
-				letters[i] = in.nextInt();
-				totalLetters += letters[i];
-			}
+            for (int i = 0; i < numLetters; i++) {
+                letters[i] = in.nextInt();
+                totalLetters += letters[i];
+            }
 
-			letters[numLetters] = totalLetters;
+            letters[numLetters] = totalLetters;
 
-			System.out.println(solve(index, letters, ""));
+            System.out.println(solve(index, letters, ""));
 
-			numLetters = in.nextInt();
-		}
+            numLetters = in.nextInt();
+        }
 
-	}
+    }
 
-	static String solve(BigInteger index, int[] letters, String ans) {
+    static String solve(long index, int[] letters, String ans) {
 
-		if (letters[letters.length - 1] == 0) {
-			return ans;
-		}
+        if (letters[letters.length - 1] == 0) {
+            return ans;
+        }
 
-		// We're guaranteed to use a letter
-		letters[letters.length - 1]--;
+        // We're guaranteed to use a letter
+        letters[letters.length - 1]--;
 
-		for (int i = 0; i < letters.length - 1; i++) {
+        for (int i = 0; i < letters.length - 1; i++) {
 
-			if (letters[i] == 0) {
-				continue;
-			}
+            if (letters[i] == 0) {
+                continue;
+            }
 
-			letters[i]--;
-			char current = (char) ('a' + i);
+            letters[i]--;
+            char current = (char) ('a' + i);
 
-			BigInteger possibleWords = numWords(letters[letters.length - 1],
-					letters);
+            long possibleWords = numWords(letters[letters.length - 1],
+                    letters);
 
-			if (index.subtract(possibleWords).equals(BigInteger.ZERO)) {
-				return ans + current + restInPlace(letters);
-			}
+            if (index - possibleWords == 0) {
+                return ans + current + restInPlace(letters);
+            }
 
-			if (index.subtract(possibleWords).compareTo(BigInteger.ZERO) <= 0) {
+            if (index - possibleWords <= 0) {
 
-				return solve(index, letters, ans + current);
-			}
-			// Return to previous state
-			else {
-				index = index.subtract(possibleWords);
-				letters[i]++;
-			}
-		}
+                return solve(index, letters, ans + current);
+            }
+            // Return to previous state
+            else {
+                index -= possibleWords;
+                letters[i]++;
+            }
+        }
 
-		return null;
+        return null;
 
-	}
+    }
 
-	static String restInPlace(int[] letters) {
+    static String restInPlace(int[] letters) {
 
-		String ans = "";
+        String ans = "";
 
-		for (int i = 0; i < letters.length - 1; i++) {
-			for (int j = 0; j < letters[i]; j++) {
-				ans += (char) ('a' + i);
-			}
-		}
+        for (int i = 0; i < letters.length - 1; i++) {
+            for (int j = 0; j < letters[i]; j++) {
+                ans += (char) ('a' + i);
+            }
+        }
 
-		return ans;
-	}
+        return ans;
+    }
 
-	static BigInteger numWords(int N, int[] letters) {
+    static long numWords(int N, int[] letters) {
 
-		BigInteger ans = factorial(N);
-		for (int i = 0; i < letters.length - 1; i++) {
-			ans = ans.divide(factorial(letters[i]));
-		}
+        BigInteger ans = factorial(N);
+        for (int i = 0; i < letters.length - 1; i++) {
+            ans = ans.divide(factorial(letters[i]));
+        }
 
-		return ans;
+        return ans.longValue();
 
-	}
+    }
 
-	static BigInteger factorial(int N) {
+    static BigInteger factorial(int N) {
 
-		if (N == 0) {
-			return BigInteger.ONE;
-		}
+        if (N == 0) {
+            return BigInteger.ONE;
+        }
 
-		if (factorial.containsKey(N)) {
-			return factorial.get(N);
-		}
+        if (factorial.containsKey(N)) {
+            return factorial.get(N);
+        }
 
-		else {
+        else {
 
-			BigInteger current = BigInteger.ONE;
+            BigInteger current = BigInteger.ONE;
 
-			for (int i = 1; i <= N; i++) {
+            for (int i = 1; i <= N; i++) {
 
-				current = current.multiply(BigInteger.valueOf(i));
+                current = current.multiply(BigInteger.valueOf(i));
 
-				factorial.put(i, current);
-			}
+                factorial.put(i, current);
+            }
 
-			return current;
-		}
+            return current;
+        }
 
-	}
+    }
 }
