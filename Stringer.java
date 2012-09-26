@@ -1,8 +1,7 @@
 /**
 Written by Mike O'Beirne (michael.obeirne@gmail.com)
 
-Passes test data but does not pass the ACM ICPC LiveJudge due to a Runtime
-Error. Can't quite figure out what the problem is exactly. :(
+Passes ACM LiveJudge.
 **/
 
 import java.math.BigInteger;
@@ -26,6 +25,7 @@ public class Stringer {
             int totalLetters = 0;
             int[] letters = new int[numLetters + 1];
 
+			// Input letter counts
             for (int i = 0; i < numLetters; i++) {
                 letters[i] = in.nextInt();
                 totalLetters += letters[i];
@@ -49,6 +49,9 @@ public class Stringer {
         // We're guaranteed to use a letter
         letters[letters.length - 1]--;
 
+		// Consider each available letter and
+		// the number of words using the remaining letters
+		// attached to the current
         for (int i = 0; i < letters.length - 1; i++) {
 
             if (letters[i] == 0) {
@@ -58,39 +61,26 @@ public class Stringer {
             letters[i]--;
             char current = (char) ('a' + i);
 
+			// Calculate the number of words using the remaining letters
             long possibleWords = numWords(letters[letters.length - 1],
                     letters);
 
-            if (index - possibleWords == 0) {
-                return ans + current + restInPlace(letters);
-            }
-
+			// If we've found the range of words it's in...
             if (index - possibleWords <= 0) {
 
                 return solve(index, letters, ans + current);
             }
-            // Return to previous state
+			
+            // Return to previous state of letters
+			// and subtract from our index
             else {
                 index -= possibleWords;
                 letters[i]++;
             }
         }
 
-        return null;
+        return "Error! Shouldn't reach this point!";
 
-    }
-
-    static String restInPlace(int[] letters) {
-
-        String ans = "";
-
-        for (int i = 0; i < letters.length - 1; i++) {
-            for (int j = 0; j < letters[i]; j++) {
-                ans += (char) ('a' + i);
-            }
-        }
-
-        return ans;
     }
 
     static long numWords(int N, int[] letters) {
